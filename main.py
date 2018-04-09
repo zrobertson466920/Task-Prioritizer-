@@ -6,6 +6,13 @@ import json
 def main():
 
     print("Loading Tasks...")
+    file_path = 'tasks.json'
+    try:
+        f = open(file_path)
+    except IOError:
+        # If not exists, create the file
+        f = open(file_path, 'w+')
+        f.write("{}")
     with open("tasks.json", 'r') as f:
         item = json.load(f)
 
