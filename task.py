@@ -59,21 +59,27 @@ def print_task(item):
 def priority(item,items):
     ux = 0
     uy = 0
+    mtime = 0
+    mimp = 0
     counter = 0
     for key,value in items.items():
         counter += 1
         ux += (100 * items[key]['ctime'] / items[key]['dtime'])
         uy += (items[key]['importance'])
+        if ((100 * items[key]['ctime'] / items[key]['dtime']) > mtime):
+            mtime = (100 * items[key]['ctime'] / items[key]['dtime'])
+        if ((items[key]['importance']) > mimp):
+            mimp = (items[key]['importance'])
     ux = ux / counter
     uy = uy / counter
 
     utime = 100 * item['ctime'] / item['dtime']
     uimp = item['importance']
 
-    pr = 0
+    pr = (utime / mtime) + (uimp / mimp)
     if (ux - utime < 0):
         pr += 1
     if (uy - uimp < 0):
-        pr += 1.5
+        pr += 2
 
     return pr
