@@ -12,25 +12,28 @@ def main():
     order = {}
 
     for key, value in item.items():
+        item[key]['priority'] = task.priority(value,item)
         order[key] = value['priority']
 
     sorted_order = sorted(order.items(), key = operator.itemgetter(1), reverse = True)
-    task.print_sort(sorted_order)
+    task.print_sort(sorted_order,item)
     print("\n")
 
     command = 'a'
     while (command != 'q'):
-        command = input("Enter a command: Add Task (a), Delete Task (d), Edit Task (e), View Taks (v), Save & Quit (q) \n")
+        command = input("Enter a command: Add Task (a), Delete Task (d), Edit Task (e), Advance Time (t), Save & Quit (q) \n")
 
         if (command == 'a'):
 
-            desc = input("Write a short description of the task below.\n")
+            desc = input("Write a short description of the task below. \n")
             importance = float(input("On a scale of (0 - 100) how important is the task? (Hint: Interpret as percentile)\n"))
-            dtime = float(input("Input estimate of time available to work on task.\n"))
-            ctime = float(input("Input estimate of time to complete the task.\n"))
+            dtime = float(input("Input estimate of free time available to work on task. (Hours)\n"))
+            ctime = float(input("Input estimate of time to complete the task. (Hours)\n"))
             item[desc] = {'ctime' : ctime, 'dtime' : dtime, 'importance' : importance, 'time' : ctime/dtime, 'priority' : 0}
-            task.priority(item[desc])
+            item[desc]['priority'] = task.priority(item[desc],item)
             order[desc] = item[desc]['priority']
+            sorted_order = sorted(order.items(), key = operator.itemgetter(1), reverse = True)
+            task.print_sort(sorted_order,item)
 
         elif (command == 'd'):
 
@@ -38,11 +41,14 @@ def main():
             del item[sorted_order[index][0]]
             del order[sorted_order[index][0]]
             del sorted_order[index]
+            sorted_order = sorted(order.items(), key = operator.itemgetter(1), reverse = True)
+            task.print_sort(sorted_order,item)
 
         elif (command == 'e'):
 
             index = int(input("Input index of task to edit. \n")) - 1
             field = 'd'
+            task.print_task(item[sorted_order[index][0]])
             while (field != 'q'):
 
                 field = input("Enter field you'd like to edit: description (d), importance (i), due-time (t), est-time (e), quit (q) \n")
@@ -53,23 +59,35 @@ def main():
                     order[desc] = item[desc]['priority']
                     del item[sorted_order[index][0]]
                     del order[sorted_order[index][0]]
-                    del sorted_order[index]
+                    sorted_order = sorted(order.items(), key = operator.itemgetter(1), reverse = True)
+                    task.print_sort(sorted_order,item)
                 elif (field == 'i'):
                     importance = input("Enter new importance. \n")
                     item[sorted_order[index][0]]['importance'] = float(importance)
-                    order[sorted_order[index][0]] = task.priority(item[sorted_order[index][0]])
+                    order[sorted_order[index][0]] = task.priority(item[sorted_order[index][0]],item)
+                    sorted_order = sorted(order.items(), key = operator.itemgetter(1), reverse = True)
+                    task.print_sort(sorted_order,item)
                 elif (field == 't'):
                     dtime = input("Enter new due-time. \n")
                     item[sorted_order[index][0]]['dtime'] = float(dtime)
-                    order[sorted_order[index][0]] = task.priority(item[sorted_order[index][0]])
+                    order[sorted_order[index][0]] = task.priority(item[sorted_order[index][0]],item)
+                    sorted_order = sorted(order.items(), key = operator.itemgetter(1), reverse = True)
+                    task.print_sort(sorted_order,item)
                 elif (field == 'e'):
                     dtime = input("Enter new est-time. \n")
                     item[sorted_order[index][0]]['ctime'] = float(dtime)
-                    order[sorted_order[index][0]] = task.priority(item[sorted_order[index][0]])
+                    order[sorted_order[index][0]] = task.priority(item[sorted_order[index][0]],item)
+                    sorted_order = sorted(order.items(), key = operator.itemgetter(1), reverse = True)
+                    task.print_sort(sorted_order,item)
 
-        elif (command == 'v'):
+        elif (command == 't'):
+            temp = input("Advance time by how much? \n")
+            for key, value in item.items():
+                item[key]['dtime'] = value['dtime'] - float(temp)
+                item[key]['priority'] = task.priority(item[key],item)
+                order[key] = value['dtime']
             sorted_order = sorted(order.items(), key = operator.itemgetter(1), reverse = True)
-            task.print_sort(sorted_order)
+            task.print_sort(sorted_order,item)
 
         elif (command == 'q'):
             sorted_order = sorted(order.items(), key = operator.itemgetter(1), reverse = True)
