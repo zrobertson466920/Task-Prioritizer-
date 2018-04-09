@@ -33,6 +33,9 @@ def print_csort(sorted_order,item):
         x.append(100 * item[ita[0]]['ctime'] / item[ita[0]]['dtime'])
         y.append(item[ita[0]]['importance'])
 
+    print("\n Usually items in the top right are Do-Now, top left are Schedule")
+    print("bottom left are Delegate/Delay, and bottom right are Delete/Cut-Corners")
+
     ax = 0
     ay = 0
     mp.scatter(x,y,s = 10)
